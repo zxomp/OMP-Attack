@@ -35,9 +35,6 @@ from utils import get_model_name, load_config
 from export_kitti import *
 from utils_attack import center_to_addpts
 
-# from .loss import attack_loss
-# from .constraint import hard_constraint
-
 def build_model(config, device, train=True):
     net = PIXOR(config['geometry'], config['use_bn'])
     loss_fn = CustomLoss(device, config, num_classes=1)
@@ -148,16 +145,12 @@ def compute_similarity_loss(det_res, target_res):
     # 3. DTW
     dtw_distance, _ = fastdtw(det_res[:, :2], target_res[:, :2], dist=euclidean)
 
-
     alpha = 0.4  
     beta = 0.2   
     gamma = 0.4 
 
     similarity_score = alpha * position_similarity + beta * heading_similarities + gamma * (1 - dtw_distance)
-
     return 1 - similarity_score
-
-
 
 def objective(x_birds, net, config, device, sample_tokens, scene_name, target_res, nusc):
     data_dir = '/dataset/nuScenes/mini_attack'
@@ -176,9 +169,6 @@ def objective(x_birds, net, config, device, sample_tokens, scene_name, target_re
     loss = np.zeros(x_birds.shape[0])
 
     for n in range(N):
-        # used for precise optimization
-        # added_points = x_birds[n, :].reshape((1, 3*4*4))
-
         # used for vague optimization
         added_points = x_birds[n, :].reshape((cfg.N_add, 3))  # n
         added_points = center_to_addpts(1, cfg.N_add, cfg.Npts_cls, 0.2, added_points)
@@ -247,10 +237,8 @@ def objective(x_birds, net, config, device, sample_tokens, scene_name, target_re
 
         _loss = compute_similarity_loss(np.array(det_res), target_res)
         loss[n] += _loss
-
     return loss
   
-
 def get_bounds_cls(N_add, Npts_cls):
     lower_bound = np.array([-2.1, -2.1, -0.1, 0.4])
     upper_bound = np.array([2.1, 2.1, 0.9, 0.7])
@@ -286,20 +274,15 @@ class PSOAttacker(BaseAttacker):
 
     def run(self, sample_tokens, scene_name, target_res):
         # lower_bound, upper_bound, center = get_bounds_cls(3, 4)
-
         target_res = target_res # todo: read target_res from file
-
         lower_bound, upper_bound, center = get_bounds_center(3)
-
         optimizer = ps.single.GlobalBestPSO(n_particles=self.n_particles, dimensions=3 * 3, options=self.options,
                                             bounds=(lower_bound, upper_bound),
                                             center=center)
 
-
         best_loss, best_perturb = optimizer.optimize(objective, iters=self.iter_num, net=self.net, config=self.config,
                                                      device=self.device, sample_tokens=sample_tokens,
                                                      scene_name=scene_name, target_res=target_res, nusc=self.nusc)
-
         return best_loss, best_perturb
 
 
@@ -335,7 +318,6 @@ if __name__ == '__main__':
     # init device
     if torch.cuda.is_available():
         device = torch.device("cuda")
-        torch.cuda.set_device(0)  # set the default GPU device to use
     else:
         device = torch.device("cpu")
 
