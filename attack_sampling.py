@@ -21,7 +21,6 @@ from utils import get_model_name, load_config
 
 from export_kitti import *
 
-
 def get_gt3Dboxes(dataset_dir, frame_id):
     # get groundtruth bounding box paramethers: class, w, h, l, y, z, x, yaw
     label_path = os.path.join(dataset_dir, 'label_2', frame_id + '.txt')
@@ -66,7 +65,6 @@ def build_model(config, device, train=True):
 
     return net, loss_fn, optimizer, scheduler
 
-
 def get_attacked_boxes(token: str,
                        gt_box: Box,
                        root: str,
@@ -75,8 +73,6 @@ def get_attacked_boxes(token: str,
 
     boxes = []
     split_folder, inst_sample_token = token.split('_')
-
-
 
     with open(os.path.join(root, split_folder, 'label_2_attacked', inst_sample_token+'.txt'), 'r') as f:
         for line in f:
@@ -315,15 +311,6 @@ def attack(data_dir, net, config, device):
         cfg = cfg_from_yaml_file(config_path)
         cfg = cfg.DET
 
-        # # get ground truth labels (lidar frame) Lidar frame system
-        # with open(os.path.join(dataset_dir, 'labels_lidar.json'), 'r') as f:
-        #     labels_lidar = json.load(f)
-        #
-        # # get attack frame ids
-        # frame_ids = list(labels_lidar.keys())
-        # frame_ids.sort()
-        # frame_ids = frame_ids[:5]
-
         # get ground truth labels dirs
         sample_tokens = []
         with open(os.path.join(dataset_dir, 'target_sample_tokens.txt'), 'r') as f:
@@ -338,10 +325,6 @@ def attack(data_dir, net, config, device):
         # get lidar paths
         lidar_paths = [os.path.join(dataset_dir, 'velodyne', f_id + '.bin') for f_id in frame_ids]
 
-        # get random added pts
-        # addpts_center_pool = get_adv_cls_center_realworld(cfg.ATTACK.N_iter, cfg.N_add, cfg.origin) 
-
-        # added_points_pool = get_adv_pts(cfg.ATTACK.N_iter, cfg.N_add) # center point pools
         added_points_pool = get_adv_cls(cfg.ATTACK.N_iter, cfg.N_add, cfg.Npts_cls) # (N_iter,N_add*Npts_cls*4)
         # added_points_pool = get_adv_pts_fixed(cfg.ATTACK.N_iter, cfg.N_add)
 
@@ -578,7 +561,6 @@ if __name__ == "__main__":
     # init device
     if torch.cuda.is_available():
         device = torch.device("cuda")
-        torch.cuda.set_device(0)  # set the default GPU device to use
     else:
         device = torch.device("cpu")
 
@@ -592,14 +574,10 @@ if __name__ == "__main__":
     net.eval()
     ### init ###
 
-    # print(net)
-    # input()
-
     # attack
     attack(args.data_dir, net, config, device)  
 
     instance_token = '011d7348763d4841859209e9aeab6a2a'
 
     show_det_delta(args.data_dir, args.scene_name, instance_token)
-
     attack_to_global(data_dir=args.data_dir, instance_token=instance_token)
