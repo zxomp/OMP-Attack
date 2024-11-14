@@ -306,8 +306,8 @@ class KittiConverter:
             # Retrieve sensor records.
             sd_record_cam = self.nusc.get('sample_data', cam_front_token)
             sd_record_lid = self.nusc.get('sample_data', lidar_token)
-            cs_record_cam = self.nusc.get('calibrated_sensor', sd_record_cam['calibrated_sensor_token']) # 相对于ego坐标系 cam_to_ego
-            cs_record_lid = self.nusc.get('calibrated_sensor', sd_record_lid['calibrated_sensor_token']) # 相对于ego坐标系 lid_to_ego
+            cs_record_cam = self.nusc.get('calibrated_sensor', sd_record_cam['calibrated_sensor_token'])
+            cs_record_lid = self.nusc.get('calibrated_sensor', sd_record_lid['calibrated_sensor_token'])
 
             # Combine transformations and convert to KITTI format.
             # Note: cam uses same conventions in KITTI and nuScenes.
@@ -547,7 +547,7 @@ class KittiConverter:
             """
             Converts nuScenes GT annotations to KITTI format.
             """
-            kitti_to_nu_lidar = Quaternion(axis=(0, 0, 1), angle=np.pi / 2) # z轴旋转90度
+            kitti_to_nu_lidar = Quaternion(axis=(0, 0, 1), angle=np.pi / 2) 
             kitti_to_nu_lidar_inv = kitti_to_nu_lidar.inverse
             imsize = (1600, 900)
 
