@@ -322,7 +322,7 @@ def attack(data_dir, net, config, device):
         # # get attack frame ids
         # frame_ids = list(labels_lidar.keys())
         # frame_ids.sort()
-        # frame_ids = frame_ids[:5]  # 前5帧
+        # frame_ids = frame_ids[:5]
 
         # get ground truth labels dirs
         sample_tokens = []
@@ -339,7 +339,7 @@ def attack(data_dir, net, config, device):
         lidar_paths = [os.path.join(dataset_dir, 'velodyne', f_id + '.bin') for f_id in frame_ids]
 
         # get random added pts
-        # addpts_center_pool = get_adv_cls_center_realworld(cfg.ATTACK.N_iter, cfg.N_add, cfg.origin)  # (*, N_add, 3)  相对可能是相对于对抗车辆的坐标系
+        # addpts_center_pool = get_adv_cls_center_realworld(cfg.ATTACK.N_iter, cfg.N_add, cfg.origin) 
 
         # added_points_pool = get_adv_pts(cfg.ATTACK.N_iter, cfg.N_add) # center point pools
         added_points_pool = get_adv_cls(cfg.ATTACK.N_iter, cfg.N_add, cfg.Npts_cls) # (N_iter,N_add*Npts_cls*4)
@@ -411,7 +411,7 @@ def attack(data_dir, net, config, device):
             for box_idx, box_pred in enumerate(attack_dets[frame_id]):
                 attack_det_seq[box_idx, frame_idx, 0] = box_pred[1]
 
-        nonempty_idxes = np.where((attack_det_seq[:, :, 0] != 0).all(axis=1))[0]  # 返回在所有frame中都不为0的addpts_center box的index
+        nonempty_idxes = np.where((attack_det_seq[:, :, 0] != 0).all(axis=1))[0]  
         # print('nonempty_idxes: ', nonempty_idxes.shape)
 
         # update attack det
