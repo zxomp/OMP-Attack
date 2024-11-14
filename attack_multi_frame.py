@@ -49,11 +49,8 @@ def process():
         ts_curr = 4
         timestep = np.array([ts_curr])
 
-        # target_inst_token = 'target'
         target_inst_tokens_path = os.path.join(args.data_dir, 'attack_pred', 'scene_inst_tokens.txt')
         target_inst_tokens = get_target_inst_token(scene_name, target_inst_tokens_path)
-        # target_inst_token = get_target_inst_token(scene_name, target_inst_tokens_path)[0]
-        # print(len(target_inst_tokens))
 
         for target_inst_token in target_inst_tokens:
             dataset_dir = os.path.join(args.data_dir, scene_name + '-' + target_inst_token)
@@ -78,8 +75,6 @@ def process():
             f.close()
             global ts_node
             ts_node = sample_tokens.index(curr_frame_id.split('-')[-1]) # 14
-            # print(ts_node)
-            # raise NotImplementedError()
             del sample_tokens
 
             # load gt
@@ -97,10 +92,6 @@ def process():
 
             ### step 3: calc perturbations ###
             valid_attack_num = len(attack_det_dict[curr_frame_id])
-            # print(curr_frame_id)
-            # print(attack_det_dict.keys())
-            # print('valid_attack_num:', valid_attack_num)
-            # raise NotImplementedError()
             dh_set_det = torch.zeros((valid_attack_num, 5, 1)).cuda()
             dp_set_det = torch.zeros((valid_attack_num, 5, 2)).cuda()
 
@@ -143,9 +134,6 @@ def attack():
         ts_curr = 4
         timestep = np.array([ts_curr])
 
-        # target_inst_token = 'target'
-        # dataset_dir = os.path.join(args.data_dir, scene_name, 'dataset')
-
         target_inst_tokens_path = os.path.join(args.data_dir, 'attack_pred', 'scene_inst_tokens.txt')
         target_inst_token = get_target_inst_token(scene_name, target_inst_tokens_path)[0]
 
@@ -159,7 +147,6 @@ def attack():
             raise ValueError('config.yaml not exists!')
         cfg = cfg_from_yaml_file(config_path)
         cfg = cfg.PRED
-
 
         # load local bias of current frame
         with open(os.path.join(dataset_dir, 'attack_det_nuscs_global.json'), 'rb') as f:
@@ -181,8 +168,7 @@ def attack():
         del attack_det_dict
         del frame_ids
         del curr_frame_id
-
-
+        
         # load ground truth
         for i, n in enumerate(scene.nodes):
             if n.id == target_inst_token:
@@ -284,13 +270,10 @@ def attack():
             loss_set_pred = []
 
             for cluster_idx in range(len(cluster_perturb_stats)):
-
                 for epoch in range(cfg.epoch_num):
-
                     # find min loss in each epoch
                     min_loss = 999.
                     min_dh = min_dp = None
-
                     ### epoch init ###
                     # re-init perturbation in each epoch
                     perturb_cand = {'obj_id': target_inst_token}
@@ -392,8 +375,6 @@ def attack():
                             grad_dp_steps.append(grad_dp)
                             ### calc gradient (0.03s) ###
 
-                            # raise ValueError()
-
                         ### reocrd best iter ###
                         loss_iter = abs(np.mean(loss_steps))
                         print('cluster {} epoch {} iter {}: loss {}'.format(cluster_idx, epoch, iter, round(loss_iter, 2)))
@@ -435,8 +416,7 @@ def attack():
 
             end_time = time.time()
             ### step 2: attack in inverse manner ###
-
-            # check if candidate set is empty?
+            
             if len(dh_set_pred) == 0 or len(dp_set_pred) == 0:
                 raise ValueError('{}: empty candidate set!'.format(scene_name))
 
