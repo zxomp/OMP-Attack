@@ -373,7 +373,7 @@ def attack():
 
                             ### calculate loss ###
                             ade_tar2ego = ade(predict_trajs[target_inst_token], egoplan_clean_scene)
-                            l2_matching = loss_matching(curr_perturb, cluster_perturb_closest.unsqueeze(0)) # Maybe don't need
+                            l2_matching = loss_matching(curr_perturb, cluster_perturb_closest.unsqueeze(0)) 
 
                             # loss = ade_tar2ego
                             loss = ade_tar2ego + l2_matching
@@ -428,7 +428,7 @@ def attack():
                         ### update perturbation with average gradient ###
 
                     # record for each epoch
-                    if (min_loss != 999.) and (min_dh != None) and (min_dp != None):  # iteration 0 are not updated yet
+                    if (min_loss != 999.) and (min_dh != None) and (min_dp != None):  
                         loss_set_pred.append(min_loss)
                         dh_set_pred.append(min_dh.detach().clone())
                         dp_set_pred.append(min_dp.detach().clone())
