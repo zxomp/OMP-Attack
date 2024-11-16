@@ -136,7 +136,7 @@ def objective(x_birds, net, config, device, sample_tokens, scene_name, target_re
 
             # gt3Dboxes = np.array([[w, h, l, y, z, x, yaw]])
             kitti_token = '%s_%s' % (dir_name, frame_id)
-            gt_box_lidar = get_gt_box(token=kitti_token, root=data_dir)  # have some problem
+            gt_box_lidar = get_gt_box(token=kitti_token, root=data_dir)
             x1 = gt_box_lidar.center[0]
             y1 = gt_box_lidar.center[1]
             z1 = gt_box_lidar.center[2]
