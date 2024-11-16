@@ -1,5 +1,4 @@
 # nuScenes dev-kit.
-# Code written by Holger Caesar, 2019.
 
 """
 This script converts nuScenes data to KITTI format and KITTI results to nuScenes.
@@ -272,7 +271,7 @@ class KittiConverter:
         """
         Converts nuScenes GT annotations to KITTI format.
         """
-        kitti_to_nu_lidar = Quaternion(axis=(0, 0, 1), angle=np.pi / 2) # z轴转90度
+        kitti_to_nu_lidar = Quaternion(axis=(0, 0, 1), angle=np.pi / 2)
         kitti_to_nu_lidar_inv = kitti_to_nu_lidar.inverse
         imsize = (1600, 900)
 
