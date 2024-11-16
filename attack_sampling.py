@@ -291,7 +291,7 @@ def attack(data_dir, net, config, device):
 
             # gt3Dboxes = np.array([[w, h, l, y, z, x, yaw]])  # Lidar frame system
             kitti_token = '%s_%s' % (scene_name, frame_id)
-            gt_box_lidar = get_gt_box(token=kitti_token, root=data_dir)  # have some problem, Lidar frame system
+            gt_box_lidar = get_gt_box(token=kitti_token, root=data_dir) 
             x1 = gt_box_lidar.center[0]
             y1 = gt_box_lidar.center[1]
             z1 = gt_box_lidar.center[2]
@@ -376,7 +376,7 @@ def attack_to_global(data_dir: str,
         else:
             dataset_paths.append(os.path.join(data_dir, args.scene_name + '-' + instance_token))
 
-    nusc = NuScenes(version='v1.0-trainval', dataroot='/home/yuy/dataset/nuScenes/trainval', verbose=True)
+    nusc = NuScenes(version='v1.0-trainval', dataroot='dataset/nuScenes/trainval', verbose=True)
     for dataset_dir in dataset_paths:
         parts = dataset_dir.split('-')
         scene_name = parts[0] + '-' + parts[1]
