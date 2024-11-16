@@ -78,8 +78,8 @@ def compute_similarity_loss(det_res, target_res):
     dtw_distance, _ = fastdtw(det_res[:, :2], target_res[:, :2], dist=euclidean)
 
     alpha = 0.4  
-    beta = 0.2   
-    gamma = 0.4 
+    beta = 0.4   
+    gamma = 0.2
 
     similarity_score = alpha * position_similarity + beta * heading_similarities + gamma * (1 - dtw_distance)
     return 1 - similarity_score
